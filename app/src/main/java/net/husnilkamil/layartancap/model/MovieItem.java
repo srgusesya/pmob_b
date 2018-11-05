@@ -1,6 +1,11 @@
 package net.husnilkamil.layartancap.model;
 
-public class MovieItem {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
+
+public class MovieItem implements Parcelable {
     int id;
     String title;
     String overview;
@@ -40,4 +45,40 @@ public class MovieItem {
     public String getPoster_path() {
         return poster_path;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.overview);
+        dest.writeDouble(this.vote_average);
+        dest.writeString(this.release_date);
+        dest.writeString(this.poster_path);
+    }
+
+    protected MovieItem(Parcel in) {
+        this.id = in.readInt();
+        this.title = in.readString();
+        this.overview = in.readString();
+        this.vote_average = in.readDouble();
+        this.release_date = in.readString();
+        this.poster_path = in.readString();
+    }
+
+    public static final Parcelable.Creator<MovieItem> CREATOR = new Parcelable.Creator<MovieItem>() {
+        @Override
+        public MovieItem createFromParcel(Parcel source) {
+            return new MovieItem(source);
+        }
+
+        @Override
+        public MovieItem[] newArray(int size) {
+            return new MovieItem[size];
+        }
+    };
 }

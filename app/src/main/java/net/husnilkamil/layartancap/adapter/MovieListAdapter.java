@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import net.husnilkamil.layartancap.R;
 import net.husnilkamil.layartancap.model.MovieItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieHolder> {
 
@@ -21,6 +24,12 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public void setDaftarFilm(ArrayList<MovieItem> films){
         //daftarFilm.clear();
         daftarFilm = films;
+        notifyDataSetChanged();
+    }
+
+    public void setDaftarFilm(List<MovieItem> films){
+        //daftarFilm.clear();
+        daftarFilm = new ArrayList<>(films);
         notifyDataSetChanged();
     }
 
@@ -45,12 +54,10 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                 String.valueOf(movieItem.getVote_average())
         );
 
-        movieHolder.imagePoster.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickHandler.movieItemClicked();
-            }
-        });
+        String url = "http://image.tmdb.org/t/p/w300" + movieItem.getPoster_path();
+        Glide.with(movieHolder.itemView)
+                .load(url)
+                .into(movieHolder.imagePoster);
     }
 
     @Override
@@ -75,10 +82,17 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             imagePoster = itemView.findViewById(R.id.text_release_date);
             textTitle = itemView.findViewById(R.id.text_title);
             textRating = itemView.findViewById(R.id.text_rating);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MovieItem movieItem = daftarFilm.get(getAdapterPosition());
+                    clickHandler.movieItemClicked(movieItem);
+                }
+            });
         }
     }
 
     public interface OnMovieItemClicked{
-        void movieItemClicked();
+        void movieItemClicked(MovieItem movieItem);
     }
 }
